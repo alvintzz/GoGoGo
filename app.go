@@ -2,19 +2,33 @@ package main
 
 import (
 	"log"
+	"flag"
 	"net/http"
 	"context"
 	"os"
 	"os/signal"
 	"time"
 	"syscall"
+
+	"github.com/alvintzz/GoGoGo/thisapp"
 )
 
 func PongHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("pong"))
+	w.Write([]byte("pongpongpong"))
 }
 
 func main() {
+	var environment = flag.String("env", "development", "Set Environment of apps. Default is development.")
+	var configTest = flag.Bool("test", false, "config test")
+	flag.Parse()
+
+	thisapp := thisapp.NewAppModule(*environment)
+	thisapp.GetConfig()
+
+	if *configTest {
+		os.Exit(0)
+	}
+
 	//Create a mux for routing incoming requests
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ping", PongHandler)
