@@ -23,7 +23,6 @@ func main() {
 	flag.Parse()
 
 	thisapp := thisapp.NewAppModule(*environment)
-	thisapp.GetConfig()
 
 	if *configTest {
 		os.Exit(0)
@@ -32,6 +31,9 @@ func main() {
 	//Create a mux for routing incoming requests
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ping", PongHandler)
+
+	thisapp.InitHandlers(mux)
+
 
 	//Create server to serve all incoming request with registered mux
 	server := &http.Server{

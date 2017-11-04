@@ -9,7 +9,7 @@ import (
 )
 
 type ProductDB interface {
-	GetAll(ctx context.Context, orderBy, orderFrom string) error
+	GetAll(ctx context.Context, orderBy, orderFrom string) ([]Product, error)
 }
 
 func NewProductDB(config *Configs) (*PostgresProductDB, error) {
@@ -39,6 +39,20 @@ func newPostgresDB(config *Configs) (*PostgresProductDB, error) {
 	return database, nil
 }
 
-func (db *PostgresProductDB) GetAll(ctx context.Context, orderBy, orderFrom string) error {
-	return nil
+type Product struct {
+	ProductID   int    `db:"product_id"`
+	ProductName string `db:"product_name"`
+}
+
+var getAllQuery = "SELECT product_id, product_name FROM tbl_products ORDER BY %s %s"
+func (db *PostgresProductDB) GetAll(ctx context.Context, orderBy, orderFrom string) ([]Product, error) {
+	products := []Product{}
+
+	query := fmt.Sprintf(getAllQuery, orderBy, orderFrom)
+	err := db.connection.Select(&products, query)
+	if err != nil {
+		err = fmt.Errorf("Failed to get Product because %s", err.Error())
+	}
+
+	return products, err
 }
