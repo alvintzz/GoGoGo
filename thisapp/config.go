@@ -40,7 +40,7 @@ func readConfigFrom(filePath, fileName string) (Configs, error) {
 
 func readConfig(env string) (Configs, error) {
 	fileName := fmt.Sprintf("thisapp.%s.ini", env)
-	filePath := "etc/config/thisapp/"
+	filePath := "/etc/config/thisapp/"
 	if env == "development" {
 		filePath = "files/etc/config/thisapp/"
 	}
